@@ -1,0 +1,37 @@
+[config]
+schemaVersion = "0.0.1"
+
+[package]
+namespace = "JevMods"
+name = "BetterOreMining"
+versionNumber = "1.0.0"
+description = "This mod adds a ripple that outlines the ore around you on each hit, even when it's buried. No ore left behind!"
+websiteUrl = "https://github.com/JevMods/BetterOreMining"
+containsNsfwContent = false
+
+[package.dependencies]
+denikson-BepInExPack_Valheim = "5.4.2351"
+
+[build]
+icon = "./package/icon.png"
+readme = "./README.md"
+outdir = "./dist"
+
+[[build.copy]]
+source = "./src/BetterOreMining/bin/Release/BetterOreMining.dll"
+target = "/"
+
+[[build.copy]]
+source = "./src/BetterOreMining/assets"
+target = "/assets"
+
+[[build.copy]]
+source = "./package/CHANGELOG.md"
+target = "/"
+
+[publish]
+repository = "https://thunderstore.io"
+communities = [ "valheim" ]
+
+[publish.categories]
+valheim = [ "mods", "tweaks", "client-side" ]

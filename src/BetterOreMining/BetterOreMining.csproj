@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>12</LangVersion>
+    <Version>1.0.0</Version>
+    <DebugType>portable</DebugType>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx"><HintPath>$(BepInExDir)\core\BepInEx.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(BepInExDir)\core\0Harmony.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="assembly_valheim" Publicize="true"><HintPath>$(ManagedDir)\assembly_valheim.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine"><HintPath>$(ManagedDir)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.PhysicsModule"><HintPath>$(ManagedDir)\UnityEngine.PhysicsModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.AssetBundleModule"><HintPath>$(ManagedDir)\UnityEngine.AssetBundleModule.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="assets\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <Target Name="GenerateBuildInfo" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <BuildInfoFile>$(IntermediateOutputPath)BuildInfo.g.cs</BuildInfoFile>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(BuildInfoFile)" Overwrite="true" Lines="namespace $(RootNamespace) { internal static class BuildInfo { public const string Version = &quot;$(Version)&quot;%3B } }" />
+    <ItemGroup><Compile Include="$(BuildInfoFile)" /></ItemGroup>
+  </Target>
+
+  <Target Name="Deploy" AfterTargets="Build" Condition="'$(Deploy)' == 'true'">
+    <ItemGroup><DeployAsset Include="$(TargetDir)assets\*" /></ItemGroup>
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)$(AssemblyName).pdb" DestinationFolder="$(PluginDeployDir)\Dev-$(AssemblyName)" />
+    <Copy SourceFiles="@(DeployAsset)" DestinationFolder="$(PluginDeployDir)\Dev-$(AssemblyName)\assets" />
+    <Message Importance="high" Text="Deployed to $(PluginDeployDir)\Dev-$(AssemblyName)" />
+  </Target>
+</Project>
